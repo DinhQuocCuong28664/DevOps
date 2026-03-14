@@ -15,7 +15,7 @@ services:
       - mongodb
     volumes:
       # Volume cho ảnh upload để không bị mất dữ liệu 
-      - app-uploads:/usr/src/app/public/uploads
+      - ./uploads:/usr/src/app/public/uploads
 
   # Dịch vụ Cơ sở dữ liệu (Database Service)
   mongodb:
@@ -28,4 +28,3 @@ services:
 # Khai báo các Volume được sử dụng
 volumes:
   mongo-data:
-  app-uploads:
