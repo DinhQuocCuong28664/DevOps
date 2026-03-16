@@ -1,0 +1,55 @@
+Step 1: SSH into the Ubuntu server
+ssh ubuntu@<ip_public> 
+
+Step 2: Clone repository
+git clone <link_repo>
+cd <repo_directory>
+
+Step 3: Grant execution permissions and run the setup script
+chmod +x scripts/setup.sh 
+./scripts/setup.sh 
+
+Step 4: Install Node.js dependencies
+cd src
+npm install 
+
+Step 5: Start and configure PM2 to run the application on startup
+pm2 start main.js --name "product-app"
+pm2 save
+pm2 startup
+# Copy and paste the command displayed in the console to complete the PM2 startup configuration
+
+Step 6: Configure Nginx Reverse Proxy
+sudo nano /etc/nginx/sites-available/default 
+
+Step 7: Test Nginx configuration and restart the service
+sudo nginx -t
+sudo systemctl restart nginx 
+
+Step 8: Install and configure Certbot for HTTPS
+sudo apt install certbot python3-certbot-nginx -y 
+sudo certbot --nginx -d devops.moteo.fun 
+
+Step 9: Reboot the server to test PM2 auto-restart
+sudo reboot
+# Reconnect via SSH, then verify the app is running (e.g., pm2 status)
+pm2 stop product-app
+
+Step 10: Install Docker
+cd phase3/scripts
+chmod +x install-docker.sh 
+./install-docker.sh
+
+Step 11: Login to Docker Hub, build and push the image
+cd ../../src
+docker login -u dinhquoccuong286
+docker build -t dinhquoccuong286/product-api:latest .
+docker push dinhquoccuong286/product-api:latest
+
+Step 12: Run the application with Docker Compose
+cd ../phase3
+docker pull dinhquoccuong286/product-api:latest
+# Create directories and grant permissions before starting docker-compose to prevent volume permission issues
+sudo mkdir -p uploads
+sudo chmod -R 777 uploads
+docker-compose up -d

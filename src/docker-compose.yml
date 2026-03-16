@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Dịch vụ Ứng dụng (Web Service)
+  app:
+    # PHẢI dùng image từ Docker Hub thay vì build trực tiếp
+    image: dinhquoccuong286/product-api:latest 
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/products_db
+      - PORT=3000
+    restart: always # Tự khởi động lại khi lỗi hoặc reboot
+    depends_on:
+      - mongodb
+    volumes:
+      # Volume cho ảnh upload để không bị mất dữ liệu 
+      - ./uploads:/usr/src/app/public/uploads
+
+  # Dịch vụ Cơ sở dữ liệu (Database Service)
+  mongodb:
+    image: mongo:7.0 # Sử dụng image chính thức
+    # Lưu ý: Có thể bỏ ports 27017 nếu không cần truy cập DB từ bên ngoài để tăng bảo mật
+    restart: always
+    volumes:
+      - mongo-data:/data/db # Volume cho dữ liệu database
+
+# Khai báo các Volume được sử dụng
+volumes:
+  mongo-data:
