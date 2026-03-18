@@ -1,11 +1,19 @@
-# Các bước đã thực hiện để đảm bảo Persistence (Duy trì ứng dụng)
-
-# 1. Khởi chạy ứng dụng lần đầu
-pm2 start main.js --name "product-api"
-
-# 2. Cấu hình startup script (Lệnh này được PM2 sinh ra tự động)
-pm2 startup
-sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-
-# 3. Lưu trạng thái để tự động phục hồi sau reboot
+Step 5: Start and configure PM2 to run the application on startup
+pm2 start main.js --name "product-app"
 pm2 save
+pm2 startup
+# Copy and paste the command displayed in the console to complete the PM2 startup configuration
+
+Step 6: Configure Nginx Reverse Proxy
+sudo nano /etc/nginx/sites-available/default 
+
+Step 7: Test Nginx configuration and restart the service
+sudo nginx -t
+sudo systemctl restart nginx 
+
+Step 8: Install and configure Certbot for HTTPS
+sudo apt install certbot python3-certbot-nginx -y 
+sudo certbot --nginx -d devops.moteo.fun 
+
+Step 9: Reboot the server to test PM2 auto-restart
+sudo reboot
