@@ -1,29 +1,29 @@
-# 1. Sử dụng Node.js 20-alpine để nhẹ và bảo mật 
+# 1. Use Node.js 20-alpine for lightweight and secure base image
 FROM node:20-alpine
 
-# Thiết lập biến môi trường để Node biết đây là môi trường production
+# Set environment variable to indicate production mode
 ENV NODE_ENV=production
 
-# 2. Tạo thư mục làm việc và cấp quyền cho user 'node'
+# 2. Set working directory and grant permissions for the 'node' user
 WORKDIR /usr/src/app
 
-# 3. Chép file quản lý thư viện
+# 3. Copy package management files
 COPY package*.json ./
 
-# 4. Cài đặt dependencies cho production (nhanh và sạch hơn npm install)
+# 4. Install production dependencies (faster and cleaner than npm install)
 RUN npm ci --only=production
 
-# 5. Chép mã nguồn (Sẽ kết hợp với .dockerignore để bỏ qua node_modules local)
+# 5. Copy source code (Combined with .dockerignore to skip local node_modules)
 COPY --chown=node:node . .
 
-# 6. Tạo thư mục uploads và đảm bảo user 'node' có quyền ghi [cite: 304, 388]
+# 6. Create uploads directory and ensure 'node' user has write permissions
 RUN mkdir -p public/uploads && chown -R node:node public/uploads
 
-# 7. Sử dụng user 'node' thay vì root để tăng tính bảo mật 
+# 7. Use 'node' user instead of root to increase security 
 USER node
 
-# 8. Mở cổng 3000
+# 8. Expose port 3000
 EXPOSE 3000
 
-# 9. Lệnh chạy ứng dụng
+# 9. Application run command
 CMD ["node", "main.js"]
